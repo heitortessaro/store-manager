@@ -1,13 +1,12 @@
 const express = require('express');
 
+// console.log(PORT);
 const app = express();
 
 // não remova esse endpoint, é para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.send();
 });
-
-app.listen(3000, () => console.log('rodando na porta 3000'));
 
 // não remova essa exportação, é para o avaliador funcionar
 // você pode registrar suas rotas normalmente, como o exemplo acima
