@@ -1,4 +1,5 @@
-const httpStatus = require('../helpers/httpStatusCode');
+const productService = require('../services/productService');
+const httpStatus = require('../helpers/httpsStatus');
 
 const getAll = async (req, res) => {
   try {
@@ -11,7 +12,8 @@ const getAll = async (req, res) => {
     return res.status(httpStatus.OK).json(results);
   } catch (err) {
     console.error(err);
-    res.status(httpStatus.INTERNAL_SERVER).json({ message: 'Error trying to finish the operation.' });
+    res.status(httpStatus.INTERNAL_SERVER)
+      .json({ message: 'Error trying to finish the operation.' });
   }
 };
 
