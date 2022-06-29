@@ -1,8 +1,10 @@
 const express = require('express');
+const morgan = require('morgan');
 const router = require('./routes/index');
-// console.log(PORT);
+
 const app = express();
 app.use(express.json());
+app.use(morgan('tiny'));
 
 // não remova esse endpoint, é para o avaliador funcionar
 app.get('/', (_request, response) => {
