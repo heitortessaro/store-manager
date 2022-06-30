@@ -1,7 +1,7 @@
 const productService = require('../services/productService');
 const httpStatus = require('../helpers/httpsStatus');
 
-const getAll = async (req, res) => {
+const getAll = async (_req, res) => {
   try {
     const results = await productService.getAll();
     if (!results) {
