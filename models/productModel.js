@@ -1,12 +1,24 @@
 const connection = require('./connection');
 
+const create = async ({ name }) => {
+  try {
+    const [result] = await connection.execute(
+      'INSERT INTO StoreManager.products (name) VALUES (?)',
+      [name],
+    );
+    return result[0];
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getAll = async () => {
   try {
     const [rows] = await connection.execute(
       'SELECT * FROM StoreManager.products',
     );
     if (!rows) return false;
-    return rows; 
+    return rows;
   } catch (error) {
     console.log(error);
   }
@@ -16,7 +28,7 @@ const getById = async (id) => {
   try {
     const [result] = await connection.execute(
       `SELECT * FROM StoreManager.products 
-      WHERE id = ?`, 
+      WHERE id = ?`,
       [id],
     );
     if (!result) return false;
@@ -30,4 +42,5 @@ const getById = async (id) => {
 module.exports = {
   getAll,
   getById,
+  create,
 };
