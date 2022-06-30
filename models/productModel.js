@@ -6,6 +6,7 @@ const create = async ({ name }) => {
       'INSERT INTO StoreManager.products (name) VALUES (?)',
       [name],
     );
+    if (!result) return false;
     return result[0];
   } catch (error) {
     console.log(error);

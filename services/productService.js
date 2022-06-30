@@ -12,7 +12,21 @@ const getById = async (id) => {
   return result;
 };
 
+const isNewProductValid = (name) => {
+  if (!name || typeof name !== 'string' || name.length < 5) return false;
+  return true;
+};
+
+const create = async ({ name }) => {
+  const isProductValid = isNewProductValid(name);
+  if (!isProductValid) return false;
+  const newProduct = await productModel.create({ name });
+  if (!newProduct) return { id: false };
+  return newProduct;
+};
+
 module.exports = {
   getAll,
   getById,
+  create,
 };
