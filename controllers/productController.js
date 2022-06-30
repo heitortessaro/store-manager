@@ -11,7 +11,6 @@ const getAll = async (_req, res) => {
     }
     return res.status(httpStatus.OK).json(results);
   } catch (error) {
-    console.error(error);
     res.status(httpStatus.INTERNAL_SERVER)
       .json({ message: 'Error trying to finish the operation.' });
   }
