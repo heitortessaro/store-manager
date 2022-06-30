@@ -7,7 +7,7 @@ const create = async ({ name }) => {
       [name],
     );
     if (!result) return false;
-    return result[0];
+    return { id: result.insertId, name };
   } catch (error) {
     console.log(error);
   }
