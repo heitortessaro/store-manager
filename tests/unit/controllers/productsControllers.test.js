@@ -91,11 +91,12 @@ describe("ProductController - calling the getById controller", () => {
   describe("When the product is found", () => {
     const req = {};
     const res = {};
-    const mockResponse =    {
+    const mockResponse = {
       id: 1,
       name: "Martelo de Thor",
     };
     before(() => {
+      req.params = { id: 1 };
       res.status = sinon.stub().returns(res);
       res.json = sinon.stub().returns(res);
       sinon.stub(productService, "getById").resolves(mockResponse);
