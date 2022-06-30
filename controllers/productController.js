@@ -31,7 +31,28 @@ const getById = async (req, res) => {
   }
 };
 
+const create = async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ message: '"name" is required' });
+    }
+    const product = await productService.create({ name });
+    if (!product) {
+      res.status(httpStatus.SEMANTIC_ERROR)
+        .json({ message: '"name" length must be at least 5 characters long' });
+    }
+    if (!product.id) return res.status(httpStatus.INTERNAL_SERVER); 
+    res.status(httpStatus.CREATED).json(product);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   getAll,
   getById,
+  create,
 };
