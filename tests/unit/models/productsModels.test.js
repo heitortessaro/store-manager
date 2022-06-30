@@ -4,7 +4,7 @@ const { expect } = require("chai");
 const connection = require("../../../models/connection");
 const productModel = require("../../../models/productModel");
 
-describe("Get all products from the db", () => {
+describe("ProducModel - Get all products from the db", () => {
   describe("When not product is found", () => {
     const mockProductsEmpty = [];
     before(async () => {
@@ -38,7 +38,7 @@ describe("Get all products from the db", () => {
       connection.execute.restore();
     });
 
-    it("Return an array with length 2", async () => {
+    it("Return an array", async () => {
       const response = await productModel.getAll();
       expect(response).to.be.a("array");
     });
@@ -53,7 +53,7 @@ describe("Get all products from the db", () => {
   });
 });
 
-describe("Search by a product using ID", () => {
+describe("ProducModel - Search by a product using ID", () => {
   describe("When a product with the supplied id does not exist", () => {
     const mockProductIdEmpty = [];
     before(async () => {
@@ -69,10 +69,12 @@ describe("Search by a product using ID", () => {
   });
 
   describe("When a product with the supplied Id exists", async () => {
-    const mockProductId = [{
-      id: 1,
-      name: "Martelo de Thor",
-    }];
+    const mockProductId = [
+      {
+        id: 1,
+        name: "Martelo de Thor",
+      },
+    ];
     before(async () => {
       sinon.stub(connection, "execute").resolves([mockProductId]);
     });
