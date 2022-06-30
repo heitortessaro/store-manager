@@ -57,3 +57,45 @@ describe("ProducService - Searches for all products", () => {
   });
 });
 
+describe("ProducService - Searches by a product using its ID", () => {
+  describe("When a product with the supplied id does not exist", () => {
+    before(async () => {
+      sinon.stub(productModel, "getById").resolves(false);
+    });
+    after(async () => {
+      productModel.getById.restore();
+    });
+    it("Return false", async () => {
+      const response = await productService.getById(1);
+      expect(response).to.be.equal(false);
+    });
+  });
+  describe("When the product is found", () => {
+    const mockResponse = {
+      id: 1,
+      name: "Martelo de Thor",
+    };
+    before(async () => {
+      sinon.stub(productModel, "getById").resolves(mockResponse);
+    });
+    after(async () => {
+      productModel.getById.restore();
+    });
+    it("Returns an Object", async () => {
+      const response = await productModel.getById(1);
+      expect(response).to.be.an("object");
+    });
+    it("The object is not empty", async () => {
+      const response = await productModel.getById(1);
+      expect(response).to.be.not.empty;
+    });
+    it('The object has "id" and "name" properties', async () => {
+      const response = await productModel.getById(1);
+      expect(response).to.include.all.keys("id", "name");
+    });
+    it("The object is the expected", async () => {
+      const response = await productModel.getById(1);
+      expect(response).to.eql(mockResponse);
+    });
+  });
+});
