@@ -51,7 +51,21 @@ const getAll = async () => {
   return result;
 };
 
+const checkSaleExist = (id, salesInDB) => {
+  if (!salesInDB.some((sale) => sale.id === id)) {
+    createException(httpStatusCodes.NOT_FOUND, 'Sale not found');
+  }
+};
+
+const getById = async ({ id }) => {
+  const salesInDB = await saleModel.getAll();
+  checkSaleExist(id, salesInDB);
+  const result = await saleModel.getById({ id });
+  return result;
+};
+
 module.exports = {
   createSale,
   getAll,
+  getById,
 };
