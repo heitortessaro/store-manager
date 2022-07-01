@@ -18,7 +18,23 @@ const createSaleProduct = async ({ saleId, productId, quantity }) => {
   // it returns nothing if all happen as expected
 };
 
+const getAll = async () => {
+  const [rows] = await connection.execute(
+    `SELECT sp.sale_id AS saleId, 
+      sp.product_id AS productId, 
+      sp.quantity AS quantity, 
+      s.date AS date 
+      FROM StoreManager.sales_products AS sp 
+      INNER JOIN StoreManager.sales AS s 
+      ON sp.sale_id = s.id 
+      ORDER BY saleId, productId; `,
+  );
+  if (!rows) createException(500, 'DB Error');
+  return rows;
+};
+
 module.exports = {
   createSale,
   createSaleProduct,
+  getAll,
 };
