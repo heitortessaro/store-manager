@@ -14,7 +14,6 @@ const isSaleDataValid = (arr) => {
       ); 
     }
   });
-  return true;
 };
 
 const allProductsExistInDB = (arr, productsInDB) => {
