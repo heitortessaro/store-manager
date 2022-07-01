@@ -46,6 +46,12 @@ const createSale = async (productList) => {
   return result;
 };
 
+const getAll = async () => {
+  const result = await saleModel.getAll();
+  return result;
+};
+
 module.exports = {
   createSale,
+  getAll,
 };
