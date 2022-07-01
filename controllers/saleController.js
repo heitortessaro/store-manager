@@ -11,6 +11,16 @@ const createSale = async (req, res) => {
   }
 };
 
+const getAll = async (_req, res) => {
+  try {
+    const results = await saleService.getAll();
+    return res.status(httpStatus.OK).json(results);
+  } catch (error) {
+    return res.status(error.status).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createSale,
+  getAll,
 };
