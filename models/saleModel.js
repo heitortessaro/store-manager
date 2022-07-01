@@ -15,7 +15,7 @@ const createSaleProduct = async ({ saleId, productId, quantity }) => {
     [saleId, productId, quantity],
   );
   if (!result) createException(500, 'DB Error');
-  return { id: result.insertId };
+  // it returns nothing if all happen as expected
 };
 
 module.exports = {
