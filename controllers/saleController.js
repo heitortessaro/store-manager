@@ -23,7 +23,7 @@ const getAll = async (_req, res) => {
 const getById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await saleService.getAll({ id });
+    const result = await saleService.getById({ id: Number(id) });
     return res.status(httpStatus.OK).json(result);
   } catch (error) {
     return res.status(error.status).json({ message: error.message });

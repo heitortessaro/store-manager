@@ -52,7 +52,7 @@ const getAll = async () => {
 };
 
 const checkSaleExist = (id, salesInDB) => {
-  if (!salesInDB.some((sale) => sale.id === id)) {
+  if (!salesInDB.some((sale) => sale.saleId === id)) {
     createException(httpStatusCodes.NOT_FOUND, 'Sale not found');
   }
 };
