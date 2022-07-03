@@ -1,16 +1,6 @@
 const connection = require('./connection');
 const createException = require('../helpers/createException');
 
-const update = async ({ id, name }) => {
-  const [result] = await connection.execute(
-    `UPDATE StoreManager.products 
-    SET name = (?)
-    WHERE id = (?);`,
-    [name, id],
-  );
-  if (!result) createException(500, 'DB Error');
-};
-
 const create = async ({ name }) => {
   try {
     const [result] = await connection.execute(
@@ -50,9 +40,29 @@ const getById = async (id) => {
   }
 };
 
+const update = async ({ id, name }) => {
+  const [result] = await connection.execute(
+    `UPDATE StoreManager.products 
+    SET name = (?)
+    WHERE id = (?);`,
+    [name, id],
+  );
+  if (!result) createException(500, 'DB Error');
+};
+
+const del = async ({ id }) => {
+  const result = await connection.execute(
+    `DELETE FROM StoreManager.products
+    WHERE id = (?);`,
+    [id],
+  );
+  if (!result) createException(500, 'DB Error');
+};
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
+  del,
 };
