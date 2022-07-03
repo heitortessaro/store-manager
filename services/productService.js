@@ -16,15 +16,13 @@ const getById = async (id) => {
 
 const isNewProductValid = (name) => {
   if (!name || typeof name !== 'string') {
-    const error = new Error('"name" is required');
-    error.status = httpStatusCodes.BAD_REQUEST;
-    throw error;
+    createException(httpStatusCodes.BAD_REQUEST, '"name" is required');
   }
   if (name.length < 5) {
-    // throw Error('erro');
-    const error = new Error('"name" length must be at least 5 characters long');
-    error.status = httpStatusCodes.SEMANTIC_ERROR;
-    throw error;
+    createException(
+      httpStatusCodes.SEMANTIC_ERROR,
+      '"name" length must be at least 5 characters long',
+    );
   }
   return true;
 };
@@ -47,10 +45,11 @@ const checkProductExist = (id, productsInDB) => {
 };
 
 const update = async ({ id, name }) => {
+  isNewProductValid(name);
   const productsInDB = await productModel.getAll();
   checkProductExist(id, productsInDB);
-  const result = await productModel.update({ id, name });
-  return result;
+  await productModel.update({ id, name });
+  return { id, name };
 };
 
 module.exports = {
