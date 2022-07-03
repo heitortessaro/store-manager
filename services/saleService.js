@@ -71,9 +71,30 @@ const del = async ({ id }) => {
   return true;
 };
 
+const update = async ({ id, productList }) => {
+  isSaleDataValid(productList);
+  const productsInDB = await productModel.getAll();
+  allProductsExistInDB(productList, productsInDB);
+  const salesInDB = await saleModel.getAll();
+  checkSaleExist(id, salesInDB);
+  await saleModel.delSaleProduct({ id });
+  const queryPromises = productList.map((p) =>
+    saleModel.createSaleProduct({ saleId: id, productId: p.productId, quantity: p.quantity }));
+  await Promise.all(queryPromises);
+  const result = { saleId: id, itemsUpdated: [] };
+  productList.forEach((p) => {
+    result.itemsUpdated = [
+      ...result.itemsUpdated, 
+      { productId: p.productId, quantity: p.quantity },
+    ];
+  });
+  return result;
+};
+
 module.exports = {
   createSale,
   getAll,
   getById,
   del,
+  update,
 };
