@@ -1,5 +1,6 @@
 const httpStatusCodes = require('../helpers/httpsStatus');
 const productModel = require('../models/productModel');
+const createException = require('../helpers/createException');
 
 const getAll = async () => {
   const result = await productModel.getAll();
@@ -39,8 +40,22 @@ const create = async ({ name }) => {
   return newProduct;
 };
 
+const checkProductExist = (id, productsInDB) => {
+  if (!productsInDB.some((product) => product.id === id)) {
+    createException(httpStatusCodes.NOT_FOUND, 'Product not found');
+  }
+};
+
+const update = async ({ id, name }) => {
+  const productsInDB = await productModel.getAll();
+  checkProductExist(id, productsInDB);
+  const result = await productModel.update({ id, name });
+  return result;
+};
+
 module.exports = {
   getAll,
   getById,
   create,
+  update,
 };
