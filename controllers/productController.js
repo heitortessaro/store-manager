@@ -51,9 +51,20 @@ const update = async (req, res) => {
   }
 };
 
+const del = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await productService.del({ id: Number(id) });
+    return res.status(httpStatus.OK_NOTHING_TO_RETURN);
+  } catch (error) {
+    return res.status(error.status).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
+  del,
 };
