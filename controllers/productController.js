@@ -61,10 +61,21 @@ const del = async (req, res) => {
   }
 };
 
+const searchByName = async (req, res) => {
+  try {
+    const { q } = req.query;
+    const result = await productService.searchByName({ query: q });
+    return res.status(httpStatus.OK).json(result);
+  } catch (error) {
+    return res.status(error.status).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
   del,
+  searchByName,
 };

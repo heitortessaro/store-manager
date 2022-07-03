@@ -59,9 +59,9 @@ const del = async ({ id }) => {
   return true;
 };
 
-const searchByName = async ({ name }) => {
+const searchByName = async ({ query }) => {
   const productsInDB = await productModel.getAll();
-  const result = productsInDB.filter((p) => p.name.include(name));
+  const result = productsInDB.filter((p) => p.name.include(query));
   return result;
 };
 
