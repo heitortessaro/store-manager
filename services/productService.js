@@ -52,9 +52,16 @@ const update = async ({ id, name }) => {
   return { id, name };
 };
 
+const del = async ({ id }) => {
+  const productsInDB = await productModel.getAll();
+  checkProductExist(id, productsInDB);
+  await productModel.del({ id });
+};
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
+  del,
 };
