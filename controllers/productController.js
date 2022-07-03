@@ -40,8 +40,20 @@ const create = async (req, res) => {
   }
 };
 
+const update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const result = await productService.update({ id: Number(id), name });
+    return res.status(httpStatus.OK).json(result);
+  } catch (error) {
+    return res.status(error.status).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAll,
   getById,
   create,
+  update,
 };
