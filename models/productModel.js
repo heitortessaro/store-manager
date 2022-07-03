@@ -1,4 +1,15 @@
 const connection = require('./connection');
+const createException = require('../helpers/createException');
+
+const update = async ({ id, name }) => {
+  const [result] = await connection.execute(
+    `UPDATE StoreManager.products 
+    SET name = (?)
+    WHERE id = (?);`,
+    [name, id],
+  );
+  if (!result) createException(500, 'DB Error');
+};
 
 const create = async ({ name }) => {
   try {
@@ -33,7 +44,6 @@ const getById = async (id) => {
       [id],
     );
     if (!result) return false;
-    // console.log(result);
     return result[0];
   } catch (error) {
     console.log(error);
@@ -44,4 +54,5 @@ module.exports = {
   getAll,
   getById,
   create,
+  update,
 };
