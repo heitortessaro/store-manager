@@ -56,6 +56,7 @@ const del = async ({ id }) => {
   const productsInDB = await productModel.getAll();
   checkProductExist(id, productsInDB);
   await productModel.del({ id });
+  return true;
 };
 
 module.exports = {
