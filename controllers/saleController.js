@@ -30,8 +30,19 @@ const getById = async (req, res) => {
   }
 };
 
+const del = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await saleService.del({ id: Number(id) });
+    return res.status(httpStatus.OK_NOTHING_TO_RETURN).json();
+  } catch (error) {
+    return res.status(error.status).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createSale,
   getAll,
   getById,
+  del,
 };
