@@ -57,10 +57,20 @@ const del = async ({ id }) => {
   if (!result) createException(500, 'DB Error');
 };
 
+const delSaleProduct = async ({ id }) => {
+  const result = await connection.execute(
+    `DELETE FROM StoreManager.sales_products
+    WHERE sale_id = (?);`,
+    [id],
+  );
+  if (!result) createException(500, 'DB Error');
+};
+
 module.exports = {
   createSale,
   createSaleProduct,
   getAll,
   getById,
   del,
+  delSaleProduct,
 };
