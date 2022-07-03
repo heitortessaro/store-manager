@@ -64,8 +64,16 @@ const getById = async ({ id }) => {
   return result;
 };
 
+const del = async ({ id }) => {
+  const salesInDB = await saleModel.getAll();
+  checkSaleExist(id, salesInDB);
+  await saleModel.del({ id });
+  return true;
+};
+
 module.exports = {
   createSale,
   getAll,
   getById,
+  del,
 };
