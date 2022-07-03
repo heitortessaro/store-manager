@@ -59,10 +59,17 @@ const del = async ({ id }) => {
   return true;
 };
 
+const searchByName = async ({ name }) => {
+  const productsInDB = await productModel.getAll();
+  const result = productsInDB.filter((p) => p.name.include(name));
+  return result;
+};
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
   del,
+  searchByName,
 };
