@@ -40,9 +40,24 @@ const del = async (req, res) => {
   }
 };
 
+const update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const productList = req.body;
+    const saleUpdated = await saleService.update({
+      id: Number(id),
+      productList,
+    });
+    res.status(httpStatus.OK).json(saleUpdated);
+  } catch (error) {
+    return res.status(error.status).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createSale,
   getAll,
   getById,
   del,
+  update,
 };
