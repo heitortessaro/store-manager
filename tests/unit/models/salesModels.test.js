@@ -260,3 +260,41 @@ describe("ServiceModel - Delete a Sale", () => {
     });
   });
 });
+
+describe("ServiceModel - Delete a Sale_Product row", () => {
+  describe("When the SQL query does no work", () => {
+    const mockResponseEmpty = [];
+    const mokeInput = { id: 1 };
+    before(async () => {
+      sinon.stub(connection, "execute").resolves(mockResponseEmpty);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("return exception", async () => {
+      try {
+        const response = await saleModel.delSaleProduct(mokeInput);
+      } catch (error) {
+        const errorMessage = error.message;
+        const errorStatus = error.status;
+        expect(errorMessage).to.be.equal("DB Error");
+        expect(errorStatus).to.be.equal(500);
+      }
+    });
+  });
+
+  describe("When the sale_product row is deleted", async () => {
+    const mockResponseEmpty = [{ affectedRows: 1 }];
+    const mokeInput = { id: 1 };
+    before(async () => {
+      sinon.stub(connection, "execute").resolves([mockResponseEmpty]);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("Return true", async () => {
+      const response = await saleModel.delSaleProduct(mokeInput);
+      expect(response).to.be.equal(true);
+    });
+  });
+});
