@@ -95,3 +95,51 @@ describe("ProducModel - Search by a product using ID", () => {
     });
   });
 });
+
+describe("ProducModel - Create a Product", () => {
+  describe("When the SQL query does no work", () => {
+    const mockProductIdEmpty = [];
+    const newProduct = {name: 'Product Name Test'}
+    before(async () => {
+      sinon.stub(connection, "execute").resolves(mockProductIdEmpty);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("return false", async () => {
+      const response = await productModel.create(newProduct);
+      expect(response).to.be.equal(false);
+    });
+  });
+
+  describe("When a product with the supplied Id exists", async () => {
+    const name = "Product Name Test";
+    const id = 1;
+    const mockResponse = { insertId, name };
+    const mockProductId = [{ insertId: id }];
+    before(async () => {
+      sinon.stub(connection, "execute").resolves([mockProductId]);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("Return an object", async () => {
+      const response = await productModel.create({ name });
+      expect(response).to.be.an("object");
+    });
+    it("The object is not empty", async () => {
+      const response = await productModel.create({ name });
+      expect(response).to.be.not.empty;
+    });
+    it('The object has "id" and "name" properties', async () => {
+      const response = await productModel.create({ name });
+      expect(response).to.include.all.keys("id", "name");
+    });
+    it("The object is the expected", async () => {
+      const response = await productModel.create({ name });
+      console.log(response);
+      expect(response).to.eql(mockResponse);
+    });
+  });
+});
+
