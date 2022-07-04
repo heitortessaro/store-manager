@@ -137,7 +137,6 @@ describe("ProducModel - Create a Product", () => {
     });
     it("The object is the expected", async () => {
       const response = await productModel.create({ name });
-      console.log(response);
       expect(response).to.eql(mockResponse);
     });
   });
@@ -191,7 +190,6 @@ describe("ProducModel - Update a Product", () => {
     });
     it("The object is the expected", async () => {
       const response = await productModel.update(updateProduct);
-      console.log(response);
       expect(response).to.eql(mockResponse);
     });
   });
@@ -231,7 +229,7 @@ describe("ProducModel - Delete a Product", () => {
     });
     it("Return true", async () => {
       const response = await productModel.del(deleteProduct);
-      expect(response).to.be(true);
+      expect(response).to.be.equal(true);
     });
   });
 });
