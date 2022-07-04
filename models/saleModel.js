@@ -14,8 +14,9 @@ const createSaleProduct = async ({ saleId, productId, quantity }) => {
     'INSERT INTO StoreManager.sales_products (sale_id, product_id, quantity) VALUES (?, ?, ?);',
     [saleId, productId, quantity],
   );
+  console.log(result);
   if (!result) createException(500, 'DB Error');
-  // it returns nothing if all happen as expected
+  return true;
 };
 
 const getAll = async () => {
