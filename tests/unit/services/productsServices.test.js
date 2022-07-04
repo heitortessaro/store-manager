@@ -322,3 +322,56 @@ describe("ProducService - Delete a product", () => {
     });
   });
 });
+
+describe("ProducService - Search by products using a query", () => {
+  describe("When receives an empty query or no names match", () => {
+    const mockResponse = [
+      {
+        id: 1,
+        name: "Martelo de Thor",
+      },
+      {
+        id: 2,
+        name: "Traje de encolhimento",
+      },
+    ];
+    const mockExpected = mockResponse;
+    before(async () => {
+      sinon.stub(productModel, "getAll").resolves(mockResponse);
+    });
+    after(async () => {
+      productModel.getAll.restore();
+    });
+    it("Return an array with all products for an empty query", async () => {
+      const response = await productService.searchByName({ query: "" });
+      expect(response).to.eql(mockExpected);
+    });
+    it("Return an array with all products when no matches happens", async () => {
+      const response = await productService.searchByName({ query: "test" });
+      expect(response).to.eql(mockExpected);
+    });
+  });
+  describe("When receives a query with matching names", () => {
+    const mockResponse = [
+      {
+        id: 1,
+        name: "Martelo de Thor",
+      },
+      {
+        id: 2,
+        name: "Traje de encolhimento",
+      },
+    ];
+    const mockExpected = [mockResponse[0]];
+    before(async () => {
+      sinon.stub(productModel, "getAll").resolves(mockResponse);
+    });
+    after(async () => {
+      productModel.getAll.restore();
+    });
+    it("Return an array with the matching product", async () => {
+      const response = await productService.searchByName({ query: "martelo" });
+      expect(response).to.eql(mockExpected);
+    });
+  });
+});
