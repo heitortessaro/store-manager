@@ -197,3 +197,42 @@ describe("ProducModel - Update a Product", () => {
   });
 });
 
+describe("ProducModel - Delete a Product", () => {
+  describe("When the SQL query does no work", () => {
+    const mockProductIdEmpty = [];
+    const updateProduct = { id: 1 };
+    before(async () => {
+      sinon.stub(connection, "execute").resolves(mockProductIdEmpty);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("return exception", async () => {
+      try {
+        const response = await productModel.del(updateProduct);
+      } catch (error) {
+        const errorMessage = error.message;
+        const errorStatus = error.status;
+        expect(errorMessage).to.be.equal("DB Error");
+        expect(errorStatus).to.be.equal(500);
+      }
+    });
+  });
+
+  describe("When the product is deleted", async () => {
+    const id = 1;
+    const deleteProduct = { id };
+    const mockProductId = [{ affectedRows: 1 }];
+    before(async () => {
+      sinon.stub(connection, "execute").resolves([mockProductId]);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("Return true", async () => {
+      const response = await productModel.del(deleteProduct);
+      expect(response).to.be(true);
+    });
+  });
+});
+
