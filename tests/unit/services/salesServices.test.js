@@ -105,15 +105,18 @@ describe("SaleService", () => {
       before(async () => {
         sinon.stub(productModel, "getAll").resolves(mockResponseGetAll);
         sinon.stub(saleModel, "createSale").resolves(mockResponseCreateSale);
-        sinon.stub(saleModel, "createSaleProduct")
-          .onCall(0).resolves(true)
-          .onCall(1).resolves(true);
+        sinon
+          .stub(saleModel, "createSaleProduct")
+          .onCall(0)
+          .resolves(true)
+          .onCall(1)
+          .resolves(true);
       });
       after(async () => {
         productModel.getAll.restore();
         saleModel.createSale.restore();
         saleModel.createSaleProduct.restore();
-      })
+      });
 
       it("Return an object with the sale id and array of sold items", async () => {
         const response = await saleService.createSale(mockInput);
@@ -188,30 +191,72 @@ describe("SaleService", () => {
         quantity: 10,
         date: "2022-07-04T23:45:35.000Z",
       },
-    ]
+    ];
     before(async () => {
       sinon.stub(saleModel, "getAll").resolves(mockResponseGetAll);
-      sinon.stub(saleModel, 'getById').resolves(mockExpected);
+      sinon.stub(saleModel, "getById").resolves(mockExpected);
     });
     after(async () => {
       saleModel.getAll.restore();
       saleModel.getById.restore();
     });
     describe("When the sale id does not exist", () => {
-      it('Return an not found exception', async () => {
+      it("Return an not found exception", async () => {
         try {
           const response = await saleService.getById({ id: 10 });
         } catch (error) {
           expect(error.status).to.be.equal(httpsStatus.NOT_FOUND);
-          expect(error.message).to.be.equal('Sale not found');
+          expect(error.message).to.be.equal("Sale not found");
         }
       });
     });
-    describe('When the sale exists', () => {
-      it('Return an array with products related to the sale', async () => {
+    describe("When the sale exists", () => {
+      it("Return an array with products related to the sale", async () => {
         const response = await saleService.getById({ id: 1 });
         expect(response).to.eql(mockExpected);
-      })
-    })
+      });
+    });
+  });
+
+  describe("Delete a sale", () => {
+    const mockResponseGetAll = [
+      {
+        saleId: 1,
+        productId: 2,
+        quantity: 10,
+        date: "2022-07-04T23:45:35.000Z",
+      },
+      {
+        saleId: 2,
+        productId: 3,
+        quantity: 15,
+        date: "2022-07-04T23:45:35.000Z",
+      },
+    ];
+
+    before(async () => {
+      sinon.stub(saleModel, "getAll").resolves(mockResponseGetAll);
+      sinon.stub(saleModel, "del").resolves(true);
+    });
+    after(async () => {
+      saleModel.getAll.restore();
+      saleModel.del.restore();
+    });
+    describe("When the sale id does not exist", () => {
+      it("Return an not found exception", async () => {
+        try {
+          const response = await saleService.del({ id: 10 });
+        } catch (error) {
+          expect(error.status).to.be.equal(httpsStatus.NOT_FOUND);
+          expect(error.message).to.be.equal("Sale not found");
+        }
+      });
+    });
+    describe("When the sale exists", () => {
+      it("Return true if the sale was deleted", async () => {
+        const response = await saleService.del({ id: 1 });
+        expect(response).to.be.equal(true);
+      });
+    });
   });
 });

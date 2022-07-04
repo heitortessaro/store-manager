@@ -67,8 +67,8 @@ const getById = async ({ id }) => {
 const del = async ({ id }) => {
   const salesInDB = await saleModel.getAll();
   checkSaleExist(id, salesInDB);
-  await saleModel.del({ id });
-  return true;
+  const response = await saleModel.del({ id });
+  return response;
 };
 
 const update = async ({ id, productList }) => {
