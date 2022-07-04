@@ -112,7 +112,7 @@ describe("ProducModel - Create a Product", () => {
     });
   });
 
-  describe("When a product with the supplied Id exists", async () => {
+  describe("When a product is created", async () => {
     const name = "Product Name Test";
     const id = 1;
     const mockResponse = { insertId, name };
@@ -137,6 +137,60 @@ describe("ProducModel - Create a Product", () => {
     });
     it("The object is the expected", async () => {
       const response = await productModel.create({ name });
+      console.log(response);
+      expect(response).to.eql(mockResponse);
+    });
+  });
+});
+
+describe("ProducModel - Update a Product", () => {
+  describe("When the SQL query does no work", () => {
+    const mockProductIdEmpty = [];
+    const updateProduct = { id: 1, name: "Product Name Test" };
+    before(async () => {
+      sinon.stub(connection, "execute").resolves(mockProductIdEmpty);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("return exception", async () => {
+      try {
+        const response = await productModel.update(updateProduct);  
+      } catch (error) {
+        const errorMessage = error.message; 
+        const errorStatus = error.status;
+        expect(errorMessage).to.be.equal("DB Error");
+        expect(errorStatus).to.be.equal(500);
+      }
+    });
+  });
+
+  describe("When the product is updated", async () => {
+    const name = "Product Name Test";
+    const id = 1;
+    const updateProduct = { id, name };
+    const mockResponse = updateProduct;
+    const mockProductId = [{ affectedRows: 1 }];
+    before(async () => {
+      sinon.stub(connection, "execute").resolves([mockProductId]);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("Return an object", async () => {
+      const response = await productModel.update(updateProduct);
+      expect(response).to.be.an("object");
+    });
+    it("The object is not empty", async () => {
+      const response = await productModel.update(updateProduct);
+      expect(response).to.be.not.empty;
+    });
+    it('The object has "id" and "name" properties', async () => {
+      const response = await productModel.update(updateProduct);
+      expect(response).to.include.all.keys("id", "name");
+    });
+    it("The object is the expected", async () => {
+      const response = await productModel.update(updateProduct);
       console.log(response);
       expect(response).to.eql(mockResponse);
     });
