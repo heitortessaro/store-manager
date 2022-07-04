@@ -160,3 +160,65 @@ describe("ServiceModel - Get all Sales", () => {
     });
   });
 });
+
+describe("ServiceModel - Get a sale using its Id", () => {
+  describe("When the SQL query does no work", () => {
+    const mockInput = { id: 1 };
+    const mockResponseEmpty = [];
+    before(async () => {
+      sinon.stub(connection, "execute").resolves(mockResponseEmpty);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("return exception", async () => {
+      try {
+        const response = await saleModel.getById(mockInput);
+      } catch (error) {
+        const errorMessage = error.message;
+        const errorStatus = error.status;
+        expect(errorMessage).to.be.equal("DB Error");
+        expect(errorStatus).to.be.equal(500);
+      }
+    });
+  });
+
+  describe("When the sale is found", async () => {
+    const mockInput = { id: 1 };
+    const mockResponse = [
+      {
+        productId: 1,
+        quantity: 5,
+        date: "2022-07-04T20:23:14.000Z",
+      },
+      {
+        productId: 2,
+        quantity: 10,
+        date: "2022-07-04T20:23:14.000Z",
+      },
+    ];
+    const expectedResponse = mockResponse;
+    before(async () => {
+      sinon.stub(connection, "execute").resolves([mockResponse]);
+    });
+    after(async () => {
+      connection.execute.restore();
+    });
+    it("Return an array", async () => {
+      const response = await saleModel.getById(mockInput);
+      expect(response).to.be.an("array");
+    });
+    it('The first object has "productId", "quantity", and "date" properties', async () => {
+      const response = await saleModel.getById(mockInput);
+      expect(response[0]).to.include.all.keys(
+        "productId",
+        "quantity",
+        "date"
+      );
+    });
+    it("The response is the expected", async () => {
+      const response = await saleModel.getById(mockInput);
+      expect(response).to.eql(expectedResponse);
+    });
+  });
+});
