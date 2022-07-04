@@ -1,6 +1,7 @@
 const { expect } = require("chai");
 const sinon = require("sinon");
 
+const httpsStatus = require('../../../helpers/httpsStatus');
 const productService = require("../../../services/productService");
 const productModel = require("../../../models/productModel");
 
@@ -98,4 +99,79 @@ describe("ProducService - Searches by a product using its ID", () => {
       expect(response).to.eql(mockResponse);
     });
   });
+});
+
+
+describe("ProducService - Create a new product", () => {
+  describe("When the input data is not valid", () => {
+    it("Return exception with  bad request if product name is not defined", async () => {
+      try {
+        const response = await productService.create({ test: "name" });
+      } catch (error) {
+        expect(error.status).to.be.equal(httpsStatus.BAD_REQUEST);
+        expect(error.message).to.be.equal('"name" is required');
+      }
+    });
+    it("Return exception with  bad request if product name is not a string", async () => {
+      try {
+        const response = await productService.create({ name: 1 });
+      } catch (error) {
+        expect(error.status).to.be.equal(httpsStatus.BAD_REQUEST);
+        expect(error.message).to.be.equal('"name" is required');
+      }
+    });
+    it("Return exception with semantic error if product name length is smaller then 5", async () => {
+      try {
+        const response = await productService.create({ name: 'four' });
+      } catch (error) {
+        expect(error.status).to.be.equal(httpsStatus.SEMANTIC_ERROR);
+        expect(error.message).to.be.equal(
+          '"name" length must be at least 5 characters long'
+        );
+      }
+    });
+  });
+  describe("When DB error happens", () => {
+    const mockInput = { name: 'Valid product name' };
+    before(async () => {
+      sinon.stub(productModel, "create").resolves(false);
+    });
+    after(async () => {
+      productModel.create.restore();
+    });
+    it("Return exception with server error sinalization", async () => {
+      try {
+        const response = await productService.create(mockInput);  
+      } catch (error) {
+        expect(error.status).to.be.equal(httpsStatus.INTERNAL_SERVER);
+        expect(error.message).to.be.equal("Server error");
+      }
+    });
+  });
+  describe("When the product is created", () => {
+    const mockInput = { name: "Valid product name" };
+    const mockResponse = { id: 1, name: mockInput.name };
+    before(async () => {
+      sinon.stub(productModel, "create").resolves(mockResponse);
+    });
+    after(async () => {
+      productModel.create.restore();
+    });
+    it("Return an object", async () => {
+      const response = await productService.create(mockInput);
+      expect(response).to.be.an("object");
+    });
+    it("The object is not empty", async () => {
+      const response = await productService.create(mockInput);
+      expect(response).to.be.not.empty;
+    });
+    it('The object has "id" and "name" properties', async () => {
+      const response = await productService.create(mockInput);
+      expect(response).to.include.all.keys("id", "name");
+    });
+    it("The object is the expected", async () => {
+      const response = await productService.create(mockInput);
+      expect(response).to.eql(mockResponse);
+    });
+  })
 });
