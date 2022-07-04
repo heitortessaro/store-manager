@@ -48,15 +48,15 @@ const update = async ({ id, name }) => {
   isNewProductValid(name);
   const productsInDB = await productModel.getAll();
   checkProductExist(id, productsInDB);
-  await productModel.update({ id, name });
-  return { id, name };
+  const response = await productModel.update({ id, name });
+  return { id: response.id, name: response.name };
 };
 
 const del = async ({ id }) => {
   const productsInDB = await productModel.getAll();
   checkProductExist(id, productsInDB);
-  await productModel.del({ id });
-  return true;
+  const response = await productModel.del({ id });
+  return response;
 };
 
 const searchByName = async ({ query }) => {

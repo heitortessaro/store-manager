@@ -48,6 +48,7 @@ const update = async ({ id, name }) => {
     [name, id],
   );
   if (!result) createException(500, 'DB Error');
+  return { id, name };
 };
 
 const del = async ({ id }) => {
@@ -57,6 +58,7 @@ const del = async ({ id }) => {
     [id],
   );
   if (!result) createException(500, 'DB Error');
+  return true;
 };
 
 module.exports = {
