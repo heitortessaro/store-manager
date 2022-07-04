@@ -175,3 +175,150 @@ describe("ProducService - Create a new product", () => {
     });
   })
 });
+
+describe("ProducService - Update a new product", () => {
+  describe("When the input data is not valid", () => {
+    it("Return exception with  bad request if product name is not defined", async () => {
+      try {
+        const response = await productService.update({ test: "name" });
+      } catch (error) {
+        expect(error.status).to.be.equal(httpsStatus.BAD_REQUEST);
+        expect(error.message).to.be.equal('"name" is required');
+      }
+    });
+    it("Return exception with  bad request if product name is not a string", async () => {
+      try {
+        const response = await productService.update({ name: 1 });
+      } catch (error) {
+        expect(error.status).to.be.equal(httpsStatus.BAD_REQUEST);
+        expect(error.message).to.be.equal('"name" is required');
+      }
+    });
+    it("Return exception with semantic error if product name length is smaller then 5", async () => {
+      try {
+        const response = await productService.update({ name: "four" });
+      } catch (error) {
+        expect(error.status).to.be.equal(httpsStatus.SEMANTIC_ERROR);
+        expect(error.message).to.be.equal(
+          '"name" length must be at least 5 characters long'
+        );
+      }
+    });
+  });
+  describe("When the product does not exist", () => {
+    const mockInput = {id: 3, name: "Valid product name" };
+    const mockResponse = [
+      {
+        id: 1,
+        name: "Martelo de Thor",
+      },
+      {
+        id: 2,
+        name: "Traje de encolhimento",
+      },
+    ];
+    before(async () => {
+      sinon.stub(productModel, "getAll").resolves(mockResponse);
+    });
+    after(async () => {
+      productModel.getAll.restore();
+    });
+    it("Return exception with bad request if product not found", async () => {
+      try {
+        const response = await productService.update(mockInput);
+      } catch (error) {
+        expect(error.status).to.be.equal(httpsStatus.NOT_FOUND);
+        expect(error.message).to.be.equal("Product not found");
+      }
+    });   
+  });
+  describe("When the product is updated", () => {
+    const mockInput = { id: 2, name: "Valid product name" };
+    const mockResponseGetAll = [
+      { id: 1, name: "Martelo de Thor" },
+      { id: 2, name: "Traje de encolhimento" }
+    ];
+    const mockResponseUpdate = { id: 2, name: mockInput.name };
+    before(async () => {
+      sinon.stub(productModel, "getAll").resolves(mockResponseGetAll);
+      sinon.stub(productModel, "update").resolves(mockResponseUpdate);
+    });
+    after(async () => {
+      productModel.getAll.restore();
+      productModel.update.restore();
+    });
+    it("Return an object", async () => {
+      const response = await productService.update(mockInput);
+      expect(response).to.be.an("object");
+    });
+    it("The object is not empty", async () => {
+      const response = await productService.update(mockInput);
+      expect(response).to.be.not.empty;
+    });
+    it('The object has "id" and "name" properties', async () => {
+      const response = await productService.update(mockInput);
+      expect(response).to.include.all.keys("id", "name");
+    });
+    it("The object is the expected", async () => {
+      const response = await productService.update(mockInput);
+      expect(response).to.eql(mockInput);
+    });
+  });
+});
+
+
+describe("ProducService - Delete a product", () => {
+  describe("When the product does not exist", () => {
+    const mockInput = { id: 3 };
+    const mockResponse = [
+      {
+        id: 1,
+        name: "Martelo de Thor",
+      },
+      {
+        id: 2,
+        name: "Traje de encolhimento",
+      },
+    ];
+    before(async () => {
+      sinon.stub(productModel, "getAll").resolves(mockResponse);
+    });
+    after(async () => {
+      productModel.getAll.restore();
+    });
+    it("Return exception with bad request if product not found", async () => {
+      try {
+        const response = await productService.del(mockInput);
+      } catch (error) {
+        expect(error.status).to.be.equal(httpsStatus.NOT_FOUND);
+        expect(error.message).to.be.equal("Product not found");
+      }
+    });
+  });
+  describe("When the product is deleted", () => {
+    const mockInput = { id: 2 };
+    const mockResponseGetAll = [
+      {
+        id: 1,
+        name: "Martelo de Thor",
+      },
+      {
+        id: 2,
+        name: "Traje de encolhimento",
+      },
+    ];
+    const mockResponseUpdate = { id: 2, name: mockInput.name };
+    before(async () => {
+      sinon.stub(productModel, "getAll").resolves(mockResponseGetAll);
+      sinon.stub(productModel, "del").resolves(true);
+    });
+    after(async () => {
+      productModel.getAll.restore();
+      productModel.del.restore();
+    });
+    it("Return true if the object was deleted", async () => {
+      const response = await productService.del(mockInput);
+      expect(response).to.be.equal(true);
+    });
+  });
+});
