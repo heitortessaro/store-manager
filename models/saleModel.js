@@ -56,6 +56,7 @@ const del = async ({ id }) => {
     [id],
   );
   if (!result) createException(500, 'DB Error');
+  return true;
 };
 
 const delSaleProduct = async ({ id }) => {
@@ -65,6 +66,7 @@ const delSaleProduct = async ({ id }) => {
     [id],
   );
   if (!result) createException(500, 'DB Error');
+  return true;
 };
 
 module.exports = {
