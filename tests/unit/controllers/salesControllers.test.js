@@ -6,7 +6,7 @@ const saleController = require("../../../controllers/saleController");
 const saleService = require("../../../services/saleService");
 
 describe.only('SaleController', () => {
-  describe('When calling create Sale', () => {
+  describe('-> When calling create Sale', () => {
     describe("When an error is thrown", () => {
       const req = {};
       const res = {};
@@ -60,6 +60,118 @@ describe.only('SaleController', () => {
           true
         );
       });
-    })
-  })
-})
+    });
+  });
+
+  describe("-> When calling getAll", () => {
+    describe("When an error is thrown", () => {
+      const req = {};
+      const res = {};
+      const message = 'DB Error';
+      const error = new Error(message);
+      error.status = httpStatus.INTERNAL_SERVER;
+      before(() => {
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(saleService, "getAll").rejects(error);
+      });
+      after(() => {
+        saleService.getAll.restore();
+      });
+      it("Expect a bad request status", async () => {
+        const response = await saleController.getAll(req, res);
+        expect(res.json.calledWith({ message })).to.be.equal(true);
+        expect(res.status.calledWith(httpStatus.INTERNAL_SERVER)).to.be.equal(true);
+      });
+    });
+    describe("When the sales are returned", () => {
+      const req = {};
+      const res = {};
+      const mokeResponse = [
+        {
+          saleId: 1,
+          productId: 1,
+          quantity: 5,
+          date: "2022-07-05T22:41:45.000Z",
+        },
+        {
+          saleId: 2,
+          productId: 3,
+          quantity: 15,
+          date: "2022-07-05T22:41:45.000Z",
+        },
+      ];
+      before(() => {
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(saleService, "getAll").resolves(mokeResponse);
+      });
+      after(() => {
+        saleService.getAll.restore();
+      });
+      it("Returns an array with information of all past sales", async () => {
+        const response = await saleController.getAll(req, res);
+        expect(res.json.calledWith(mokeResponse)).to.be.equal(true);
+        expect(res.status.calledWith(httpStatus.OK)).to.be.equal(true);
+      });
+    });
+  });
+
+  describe("-> When calling getById", () => {
+    describe("When an error is thrown", () => {
+      const req = {};
+      const res = {};
+      const id = 1;
+      const message = "Sale not found";
+      const error = new Error(message);
+      error.status = httpStatus.NOT_FOUND;
+      before(() => {
+        req.params = { id };
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(saleService, "getById").rejects(error);
+      });
+      after(() => {
+        saleService.getById.restore();
+      });
+      it("Expect a bad request status", async () => {
+        const response = await saleController.getById(req, res);
+        expect(res.json.calledWith({ message })).to.be.equal(true);
+        expect(res.status.calledWith(httpStatus.NOT_FOUND)).to.be.equal(
+          true
+        );
+      });
+    });
+    describe("When the sale is returned", () => {
+      const req = {};
+      const res = {};
+      const id = 1;
+      const mokeResponse = [
+        {
+          productId: 1,
+          quantity: 5,
+          date: "2022-07-05T22:41:45.000Z",
+        },
+        {
+          productId: 2,
+          quantity: 10,
+          date: "2022-07-05T22:41:45.000Z",
+        },
+      ];
+      before(() => {
+        req.params = { id };
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(saleService, "getById").resolves(mokeResponse);
+      });
+      after(() => {
+        saleService.getById.restore();
+      });
+      it("Returns an array with information of all past sales", async () => {
+        const response = await saleController.getById(req, res);
+        expect(res.json.calledWith(mokeResponse)).to.be.equal(true);
+        expect(res.status.calledWith(httpStatus.OK)).to.be.equal(true);
+      });
+    });
+  });
+});
