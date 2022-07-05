@@ -174,4 +174,52 @@ describe.only('SaleController', () => {
       });
     });
   });
+
+  describe("-> When calling del", () => {
+    describe("When an error is thrown", () => {
+      const req = {};
+      const res = {};
+      const id = 1;
+      const message = "Sale not found";
+      const error = new Error(message);
+      error.status = httpStatus.NOT_FOUND;
+      before(() => {
+        req.params = { id };
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(saleService, "del").rejects(error);
+      });
+      after(() => {
+        saleService.del.restore();
+      });
+      it("Expect a bad request status", async () => {
+        const response = await saleController.del(req, res);
+        expect(res.json.calledWith({ message })).to.be.equal(true);
+        expect(res.status.calledWith(httpStatus.NOT_FOUND)).to.be.equal(true);
+      });
+    });
+    describe("When the sale is deleted", () => {
+      const req = {};
+      const res = {};
+      const id = 1;
+      const mokeResponse = true;
+      before(() => {
+        req.params = { id };
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(saleService, "del").resolves(mokeResponse);
+      });
+      after(() => {
+        saleService.del.restore();
+      });
+      it("Returns true to informe that the sale was deleted", async () => {
+        const response = await saleController.del(req, res);
+        expect(res.json.calledWith()).to.be.equal(true);
+        expect(
+          res.status.calledWith(httpStatus.OK_NOTHING_TO_RETURN)
+        ).to.be.equal(true);
+      });
+    });
+  });
+
 });
