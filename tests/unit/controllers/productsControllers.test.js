@@ -1,7 +1,6 @@
-const { expect, instanceOf, property } = require("chai");
+const { expect } = require("chai");
 const sinon = require("sinon");
 const httpStatus = require("../../../helpers/httpsStatus");
-const createException = require('../../../helpers/createException');
 
 const productController = require("../../../controllers/productController");
 const productService = require("../../../services/productService");
@@ -250,7 +249,7 @@ describe("ProductController", () => {
       after(() => {
         productService.del.restore();
       });
-      it.only("Returns true, signaling that the object has been deleted", async () => {
+      it("Returns true, signaling that the object has been deleted", async () => {
         const response = await productController.del(req, res);
         expect(res.json.calledWith()).to.be.true;
         expect(res.status.calledWith(httpStatus.OK_NOTHING_TO_RETURN)).to.be.true;
