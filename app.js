@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
-const swaggerUi = require('swagger-ui-express');
-const swaggerFile = require('./swagger_output.json');
+// const swaggerUi = require('swagger-ui-express');
+// const swaggerFile = require('./swagger_output.json');
 const router = require('./routes/index');
 
 const app = express();
@@ -13,13 +13,13 @@ app.get('/', (_request, response) => {
   response.send();
 });
 
-app.get('/test', (_req, res) => {
-  res.status(200).send('Test Ok');
-});
+// app.get('/test', (_req, res) => {
+//   res.status(200).send('Test Ok');
+// });
 
 app.use('/products', router.productsRouter);
 app.use('/sales', router.salesRouter);
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+// app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // não remova essa exportação, é para o avaliador funcionar
 // você pode registrar suas rotas normalmente, como o exemplo acima
