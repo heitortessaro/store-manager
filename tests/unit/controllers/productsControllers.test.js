@@ -120,14 +120,14 @@ describe("ProductController", () => {
   });
 
   describe('-> Calling the create controller', () => {
-    describe('When name is not defined', () => {
+    describe('when an error is thrown', () => {
       const req = {};
       const res = {};
       const message = '"name" is required';
       const error = new Error(message);
       error.status = httpStatus.BAD_REQUEST;
       before(() => {
-        req.body = { name: 'four' };
+        req.body = { name: '' };
         res.status = sinon.stub().returns(res);
         res.json = sinon.stub().returns(res);
         sinon.stub(productService, "create").rejects(error);
@@ -148,7 +148,7 @@ describe("ProductController", () => {
     describe('When the product is created', () => {
       const req = {};
       const res = {};
-      const name = 'Test Product'
+      const name = 'Test Product';
       const mockResponse = { id: 1, name };
       before(() => {
         req.body = { name };
@@ -159,11 +159,58 @@ describe("ProductController", () => {
       after(() => {
         productService.create.restore();
       });
-      it('Returns an object with the product it and its name', async () => {
+      it('Returns an object with the product id and its name', async () => {
         const response = await productController.create(req, res);
         expect(res.json.calledWith(mockResponse)).to.be.true;
         expect(res.status.calledWith(httpStatus.CREATED)).to.be.true;
       });
     });
   });
+
+  describe('-> Calling the update from controller', () => {
+    describe("when an error is thrown", () => {
+      const req = {};
+      const res = {};
+      const message = '"name" is required';
+      const error = new Error(message);
+      error.status = httpStatus.BAD_REQUEST;
+      before(() => {
+        req.body = { name: "" };
+        req.params = { id: 1 };
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(productService, "update").rejects(error);
+      });
+      after(() => {
+        productService.update.restore();
+      });
+      it("Expect a bad request status", async () => {
+        const response = await productController.update(req, res);
+        expect(res.json.calledWith({ message })).to.be.equal(true);
+        expect(res.status.calledWith(httpStatus.BAD_REQUEST)).to.be.equal(true);
+      });
+    });
+    describe("When the product is updated", () => {
+      const req = {};
+      const res = {};
+      const name = "Test Product";
+      const id = 1;
+      const mockResponse = { id, name };
+      before(() => {
+        req.body = { name };
+        req.params = { id };
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(productService, "update").resolves(mockResponse);
+      });
+      after(() => {
+        productService.update.restore();
+      });
+      it("Returns an object with the product id and its name", async () => {
+        const response = await productController.update(req, res);
+        expect(res.json.calledWith(mockResponse)).to.be.true;
+        expect(res.status.calledWith(httpStatus.OK)).to.be.true;
+      });
+    });
+  })
 });
