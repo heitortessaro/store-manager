@@ -259,4 +259,8 @@ describe("SaleService", () => {
       });
     });
   });
+
+  describe('Should test update function', () => {
+  
+  })
 });
