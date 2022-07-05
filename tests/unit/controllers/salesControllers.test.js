@@ -5,7 +5,7 @@ const httpStatus = require("../../../helpers/httpsStatus");
 const saleController = require("../../../controllers/saleController");
 const saleService = require("../../../services/saleService");
 
-describe.only('SaleController', () => {
+describe('SaleController', () => {
   describe('-> When calling create Sale', () => {
     describe("When an error is thrown", () => {
       const req = {};
@@ -222,4 +222,75 @@ describe.only('SaleController', () => {
     });
   });
 
+  describe("-> When calling create Sale", () => {
+    describe("When an error is thrown", () => {
+      const req = {};
+      const res = {};
+      const message = '"quantity" must be greater than or equal to 1';
+      const error = new Error(message);
+      error.status = httpStatus.SEMANTIC_ERROR;
+      const id = 101;
+      const productList = [{ productId: 2, quantity: -1 }];
+      before(() => {
+        req.params = { id };
+        req.body = productList;
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(saleService, "update").rejects(error);
+      });
+      after(() => {
+        saleService.update.restore();
+      });
+      it("Expect a bad request status", async () => {
+        const response = await saleController.update(req, res);
+        expect(res.json.calledWith({ message })).to.be.equal(true);
+        expect(res.status.calledWith(httpStatus.SEMANTIC_ERROR)).to.be.equal(
+          true
+        );
+      });
+    });
+    describe("When the sale is updated", () => {
+      const req = {};
+      const res = {};
+      const id = 1;
+      const productList = [
+        {
+          productId: 1,
+          quantity: 10,
+        },
+        {
+          productId: 2,
+          quantity: 50,
+        },
+      ];
+      const mokeResponse = {
+        saleId: 1,
+        itemsUpdated: [
+          {
+            productId: 1,
+            quantity: 10,
+          },
+          {
+            productId: 2,
+            quantity: 50,
+          },
+        ],
+      };
+      before(() => {
+        req.params = { id };
+        req.body = productList;
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        sinon.stub(saleService, "update").resolves(mokeResponse);
+      });
+      after(() => {
+        saleService.update.restore();
+      });
+      it("Returns an object with the sale Id and itens sold updated", async () => {
+        const response = await saleController.update(req, res);
+        expect(res.json.calledWith(mokeResponse)).to.be.equal(true);
+        expect(res.status.calledWith(httpStatus.OK)).to.be.equal(true);
+      });
+    });
+  });
 });
