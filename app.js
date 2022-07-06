@@ -1,11 +1,13 @@
 const express = require('express');
 const morgan = require('morgan');
+const helmet = require('helmet');
 // const swaggerUi = require('swagger-ui-express');
 // const swaggerFile = require('./swagger_output.json');
 const router = require('./routes/index');
 
 const app = express();
 app.use(express.json());
+app.use(helmet());
 app.use(morgan('tiny'));
 
 // não remova esse endpoint, é para o avaliador funcionar
