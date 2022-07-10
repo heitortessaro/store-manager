@@ -53,7 +53,7 @@ cd project
 Step 3. Clone the project:
 
 ~~~bash
-git clone (ssh-key-from-this-repository) 
+git clone git@github.com:heitortessaro/store-manager.git 
 ~~~
 
 Step 4. Change to the cloned directory:
