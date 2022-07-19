@@ -36,7 +36,7 @@ Future improvements objectives include:
 
 ## Installing the Project Locally
 
-Here is a guide to installing the project locally. Each step is followed by a command to perform the described action. In of having any doubts, problems, or feedback, please, contact me.
+Here is a guide to installing the project locally. Each step is followed by a command to perform the described action. In case of having any doubts, problems, or feedback, please, contact me.
 
 Step 1. Create a local directory using `mkdir`:
 
